@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Calendar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        
+        
+
+        
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            cursor: pointer;
+            border-radius: 50%;
+            margin-top: -6px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 class="text-3xl font-bold text-gray-900">Internship Calendar</h1>
+            <p class="text-gray-600 mt-2">Find your perfect internship opportunity</p>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Filters Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Filters</h2>
+
+                    <!-- Organization Type -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">Organization Type</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="filterGov"
+                                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span class="ml-3 text-gray-700">Government</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="filterPrivate"
+                                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span class="ml-3 text-gray-700">Private</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Compensation -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">Compensation</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="filterStipend"
+                                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span class="ml-3 text-gray-700">Stipend</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="filterUnpaid"
+                                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span class="ml-3 text-gray-700">Unpaid</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Work Type -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">Work Type</h3>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="filterRemote"
+                                class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                            <span class="ml-3 text-gray-700">Remote</span>
+                        </label>
+                    </div>
+
+                    <!-- Duration Range -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-medium text-gray-700 mb-3">
+                            Duration (weeks): up to <span id="durationValue">24</span>
+                        </h3>
+                        <input type="range" id="durationSlider" min="1" max="24" value="24"
+                            class="w-full h-2 bg-red-200 rounded-lg cursor-pointer">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1 week</span>
+                            <span>24 weeks</span>
+                        </div>
+                    </div>
+
+                    <!-- Clear Filters -->
+                    <button id="clearFilters"
+                        class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search internships by title or company..."
+                            class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <svg class="absolute left-4 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Results Count -->
+                <div class="mb-4">
+                    <p class="text-gray-600">
+                        Showing <span id="resultsCount" class="font-semibold text-gray-900">0</span> internship<span
+                            id="pluralS">s</span>
+                    </p>
+                </div>
+
+                <!-- Internship Cards Container -->
+                <div id="internshipsContainer" class="space-y-4">
+                    <!-- Cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample internship data
+        const internships = [
+    {
+        "month": "January",
+        "organization": "NEGD (Digital India)",
+        "role": "Technical Interns",
+        "application_period": "December - January",
+        "stipend": "10,000",
+        "id": 0,
+        "company": "NEGD (Digital India)",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "December - January",
+        "endDate": "December - January",
+        "description": "Study environmental impact assessments",
+        "title": "Technical Interns"
+    },
+    {
+        "month": "January",
+        "organization": "MEA (Ministry of External Affairs)",
+        "role": "Internship Program Term One",
+        "application_period": "January - February",
+        "stipend": "10,000",
+        "id": 1,
+        "company": "MEA (Ministry of External Affairs)",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "January - February",
+        "endDate": "January - February",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Program Term One"
+    },
+    {
+        "month": "January",
+        "organization": "Microsoft",
+        "role": "Explore Internship (Software Engineer)",
+        "application_period": "November - January",
+        "stipend": "80,000 - 1.5 Lakh",
+        "id": 2,
+        "company": "Microsoft",
+        "type": "private",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "November - January",
+        "endDate": "November - January",
+        "description": "Study environmental impact assessments",
+        "title": "Explore Internship (Software Engineer)"
+    },
+    {
+        "month": "January",
+        "organization": "AI For All Challenge",
+        "role": "AI/ML Hackathon",
+        "application_period": "January",
+        "stipend": "1 Lakh (prize money)",
+        "id": 3,
+        "company": "AI For All Challenge",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "January",
+        "endDate": "January",
+        "description": "Study environmental impact assessments",
+        "title": "AI/ML Hackathon"
+    },
+    {
+        "month": "January",
+        "organization": "IIT Delhi",
+        "role": "e-Raksha Hackathon (Cyber Security, Defense & AI)",
+        "application_period": "December - January",
+        "stipend": "3 Lakh (prize money)",
+        "id": 4,
+        "company": "IIT Delhi",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "December - January",
+        "endDate": "December - January",
+        "description": "Study environmental impact assessments",
+        "title": "e-Raksha Hackathon (Cyber Security, Defense & AI)"
+    },
+    {
+        "month": "February",
+        "organization": "Summer of Bitcoin",
+        "role": "Software Development",
+        "application_period": "February - March",
+        "stipend": "N/A",
+        "id": 5,
+        "company": "Summer of Bitcoin",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "February - March",
+        "endDate": "February - March",
+        "description": "Study environmental impact assessments",
+        "title": "Software Development"
+    },
+    {
+        "month": "February",
+        "organization": "IIT Kanpur",
+        "role": "Search (likely Summer Internship/Search related)",
+        "application_period": "February - March",
+        "stipend": "N/A",
+        "id": 6,
+        "company": "IIT Kanpur",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "February - March",
+        "endDate": "February - March",
+        "description": "Study environmental impact assessments",
+        "title": "Search (likely Summer Internship/Search related)"
+    },
+    {
+        "month": "February",
+        "organization": "IIT Bombay",
+        "role": "FOSSEE Semester Long Internship",
+        "application_period": "February - March",
+        "stipend": "N/A",
+        "id": 7,
+        "company": "IIT Bombay",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "February - March",
+        "endDate": "February - March",
+        "description": "Study environmental impact assessments",
+        "title": "FOSSEE Semester Long Internship"
+    },
+    {
+        "month": "February",
+        "organization": "AMD",
+        "role": "Single Shot Hackathon",
+        "application_period": "February - March",
+        "stipend": "N/A",
+        "id": 8,
+        "company": "AMD",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "February - March",
+        "endDate": "February - March",
+        "description": "Study environmental impact assessments",
+        "title": "Single Shot Hackathon"
+    },
+    {
+        "month": "February",
+        "organization": "IIT Mandi",
+        "role": "eXplored Expeditions 26",
+        "application_period": "February - March",
+        "stipend": "N/A",
+        "id": 9,
+        "company": "IIT Mandi",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "February - March",
+        "endDate": "February - March",
+        "description": "Study environmental impact assessments",
+        "title": "eXplored Expeditions 26"
+    },
+    {
+        "month": "March",
+        "organization": "Intel",
+        "role": "Student Intern",
+        "application_period": "March - April",
+        "stipend": "N/A",
+        "id": 10,
+        "company": "Intel",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "March - April",
+        "endDate": "March - April",
+        "description": "Study environmental impact assessments",
+        "title": "Student Intern"
+    },
+    {
+        "month": "March",
+        "organization": "DRDO",
+        "role": "Apprenticeship",
+        "application_period": "March - April",
+        "stipend": "N/A",
+        "id": 11,
+        "company": "DRDO",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "March - April",
+        "endDate": "March - April",
+        "description": "Study environmental impact assessments",
+        "title": "Apprenticeship"
+    },
+    {
+        "month": "March",
+        "organization": "JP Morgan & Chase",
+        "role": "Software Engineer Internship",
+        "application_period": "March - April",
+        "stipend": "N/A",
+        "id": 12,
+        "company": "JP Morgan & Chase",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "March - April",
+        "endDate": "March - April",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Internship"
+    },
+    {
+        "month": "March",
+        "organization": "Nvidia",
+        "role": "Internship Programs",
+        "application_period": "March - April",
+        "stipend": "N/A",
+        "id": 13,
+        "company": "Nvidia",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "March - April",
+        "endDate": "March - April",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "March",
+        "organization": "Goldman Sachs",
+        "role": "Summer Analyst Internship",
+        "application_period": "March - April",
+        "stipend": "N/A",
+        "id": 14,
+        "company": "Goldman Sachs",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "March - April",
+        "endDate": "March - April",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Analyst Internship"
+    },
+    {
+        "month": "April",
+        "organization": "Amazon",
+        "role": "SDE (Software Development Engineer) Intern",
+        "application_period": "April - May",
+        "stipend": "N/A",
+        "id": 15,
+        "company": "Amazon",
+        "type": "private",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "April - May",
+        "endDate": "April - May",
+        "description": "Study environmental impact assessments",
+        "title": "SDE (Software Development Engineer) Intern"
+    },
+    {
+        "month": "April",
+        "organization": "SAP Labs",
+        "role": "Development Intern",
+        "application_period": "April - May",
+        "stipend": "N/A",
+        "id": 16,
+        "company": "SAP Labs",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "April - May",
+        "endDate": "April - May",
+        "description": "Study environmental impact assessments",
+        "title": "Development Intern"
+    },
+    {
+        "month": "April",
+        "organization": "ISRO",
+        "role": "Internship Programs",
+        "application_period": "April - May",
+        "stipend": "N/A",
+        "id": 17,
+        "company": "ISRO",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "April - May",
+        "endDate": "April - May",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "April",
+        "organization": "Tata Steel",
+        "role": "Internship Program",
+        "application_period": "April - May",
+        "stipend": "N/A",
+        "id": 18,
+        "company": "Tata Steel",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "April - May",
+        "endDate": "April - May",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Program"
+    },
+    {
+        "month": "April",
+        "organization": "Flipkart",
+        "role": "Software Development Internship",
+        "application_period": "April - May",
+        "stipend": "N/A",
+        "id": 19,
+        "company": "Flipkart",
+        "type": "private",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "April - May",
+        "endDate": "April - May",
+        "description": "Study environmental impact assessments",
+        "title": "Software Development Internship"
+    },
+    {
+        "month": "May",
+        "organization": "Cisco",
+        "role": "Summer Intern",
+        "application_period": "May - June",
+        "stipend": "N/A",
+        "id": 20,
+        "company": "Cisco",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "May - June",
+        "endDate": "May - June",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "May",
+        "organization": "Dell",
+        "role": "Technical Intern",
+        "application_period": "May - June",
+        "stipend": "N/A",
+        "id": 21,
+        "company": "Dell",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "May - June",
+        "endDate": "May - June",
+        "description": "Study environmental impact assessments",
+        "title": "Technical Intern"
+    },
+    {
+        "month": "May",
+        "organization": "Intuit",
+        "role": "Software Engineer Intern",
+        "application_period": "May - June",
+        "stipend": "N/A",
+        "id": 22,
+        "company": "Intuit",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "May - June",
+        "endDate": "May - June",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "May",
+        "organization": "Tata Motors",
+        "role": "Internship Programs",
+        "application_period": "May - June",
+        "stipend": "N/A",
+        "id": 23,
+        "company": "Tata Motors",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "May - June",
+        "endDate": "May - June",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "May",
+        "organization": "Zoho",
+        "role": "Summer Intern",
+        "application_period": "May - June",
+        "stipend": "N/A",
+        "id": 24,
+        "company": "Zoho",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "May - June",
+        "endDate": "May - June",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "June",
+        "organization": "Adobe",
+        "role": "Software Engineer Intern",
+        "application_period": "June - July",
+        "stipend": "N/A",
+        "id": 25,
+        "company": "Adobe",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "June - July",
+        "endDate": "June - July",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "June",
+        "organization": "Samsung",
+        "role": "R&D Intern",
+        "application_period": "June - July",
+        "stipend": "N/A",
+        "id": 26,
+        "company": "Samsung",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "June - July",
+        "endDate": "June - July",
+        "description": "Study environmental impact assessments",
+        "title": "R&D Intern"
+    },
+    {
+        "month": "June",
+        "organization": "Siemens",
+        "role": "Summer Intern",
+        "application_period": "June - July",
+        "stipend": "N/A",
+        "id": 27,
+        "company": "Siemens",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "June - July",
+        "endDate": "June - July",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "June",
+        "organization": "Wipro",
+        "role": "Internship Programs",
+        "application_period": "June - July",
+        "stipend": "N/A",
+        "id": 28,
+        "company": "Wipro",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "June - July",
+        "endDate": "June - July",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "June",
+        "organization": "Capgemini",
+        "role": "Internships",
+        "application_period": "June - July",
+        "stipend": "N/A",
+        "id": 29,
+        "company": "Capgemini",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "June - July",
+        "endDate": "June - July",
+        "description": "Study environmental impact assessments",
+        "title": "Internships"
+    },
+    {
+        "month": "July",
+        "organization": "Morgan Stanley",
+        "role": "Summer Analyst Internship",
+        "application_period": "July - August",
+        "stipend": "N/A",
+        "id": 30,
+        "company": "Morgan Stanley",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "July - August",
+        "endDate": "July - August",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Analyst Internship"
+    },
+    {
+        "month": "July",
+        "organization": "IBM",
+        "role": "Software Engineer Intern",
+        "application_period": "July - August",
+        "stipend": "N/A",
+        "id": 31,
+        "company": "IBM",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "July - August",
+        "endDate": "July - August",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "July",
+        "organization": "Infosys",
+        "role": "Summer Intern",
+        "application_period": "July - August",
+        "stipend": "N/A",
+        "id": 32,
+        "company": "Infosys",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "July - August",
+        "endDate": "July - August",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "July",
+        "organization": "Cognizant",
+        "role": "Internship Programs",
+        "application_period": "July - August",
+        "stipend": "N/A",
+        "id": 33,
+        "company": "Cognizant",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "July - August",
+        "endDate": "July - August",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "July",
+        "organization": "TCS",
+        "role": "Internships",
+        "application_period": "July - August",
+        "stipend": "N/A",
+        "id": 34,
+        "company": "TCS",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "July - August",
+        "endDate": "July - August",
+        "description": "Study environmental impact assessments",
+        "title": "Internships"
+    },
+    {
+        "month": "August",
+        "organization": "Google",
+        "role": "STEP Intern (Software Development Engineer)",
+        "application_period": "August - September",
+        "stipend": "N/A",
+        "id": 35,
+        "company": "Google",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "August - September",
+        "endDate": "August - September",
+        "description": "Study environmental impact assessments",
+        "title": "STEP Intern (Software Development Engineer)"
+    },
+    {
+        "month": "August",
+        "organization": "NetApp",
+        "role": "Software Engineer Intern",
+        "application_period": "August - September",
+        "stipend": "N/A",
+        "id": 36,
+        "company": "NetApp",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "August - September",
+        "endDate": "August - September",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "August",
+        "organization": "Apple",
+        "role": "Software Engineer Intern",
+        "application_period": "August - September",
+        "stipend": "N/A",
+        "id": 37,
+        "company": "Apple",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "August - September",
+        "endDate": "August - September",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "August",
+        "organization": "Oracle",
+        "role": "Intern Programs",
+        "application_period": "August - September",
+        "stipend": "N/A",
+        "id": 38,
+        "company": "Oracle",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "August - September",
+        "endDate": "August - September",
+        "description": "Study environmental impact assessments",
+        "title": "Intern Programs"
+    },
+    {
+        "month": "August",
+        "organization": "L&T",
+        "role": "Internship Programs",
+        "application_period": "August - September",
+        "stipend": "N/A",
+        "id": 39,
+        "company": "L&T",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "August - September",
+        "endDate": "August - September",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "September",
+        "organization": "Meta",
+        "role": "Software Engineer Intern",
+        "application_period": "September - October",
+        "stipend": "N/A",
+        "id": 40,
+        "company": "Meta",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "September - October",
+        "endDate": "September - October",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "September",
+        "organization": "Uber",
+        "role": "Software Engineer Intern",
+        "application_period": "September - October",
+        "stipend": "N/A",
+        "id": 41,
+        "company": "Uber",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "September - October",
+        "endDate": "September - October",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "September",
+        "organization": "LinkedIn",
+        "role": "Software Engineer Intern",
+        "application_period": "September - October",
+        "stipend": "N/A",
+        "id": 42,
+        "company": "LinkedIn",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "September - October",
+        "endDate": "September - October",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "September",
+        "organization": "American Express",
+        "role": "Summer Intern",
+        "application_period": "September - October",
+        "stipend": "N/A",
+        "id": 43,
+        "company": "American Express",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "September - October",
+        "endDate": "September - October",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "September",
+        "organization": "Deloitte",
+        "role": "Internship Programs",
+        "application_period": "September - October",
+        "stipend": "N/A",
+        "id": 44,
+        "company": "Deloitte",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "September - October",
+        "endDate": "September - October",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    },
+    {
+        "month": "October",
+        "organization": "PwC",
+        "role": "Internship Program",
+        "application_period": "October - November",
+        "stipend": "N/A",
+        "id": 45,
+        "company": "PwC",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "October - November",
+        "endDate": "October - November",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Program"
+    },
+    {
+        "month": "October",
+        "organization": "HP",
+        "role": "Software Engineer Intern",
+        "application_period": "October - November",
+        "stipend": "N/A",
+        "id": 46,
+        "company": "HP",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "October - November",
+        "endDate": "October - November",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Intern"
+    },
+    {
+        "month": "October",
+        "organization": "Dell",
+        "role": "Technical Intern",
+        "application_period": "October - November",
+        "stipend": "N/A",
+        "id": 47,
+        "company": "Dell",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "October - November",
+        "endDate": "October - November",
+        "description": "Study environmental impact assessments",
+        "title": "Technical Intern"
+    },
+    {
+        "month": "October",
+        "organization": "RBI (Reserve Bank of India)",
+        "role": "Summer Intern",
+        "application_period": "October - December",
+        "stipend": "20,000",
+        "id": 48,
+        "company": "RBI (Reserve Bank of India)",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "October - December",
+        "endDate": "October - December",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "November",
+        "organization": "NITI Aayog",
+        "role": "Internship Program",
+        "application_period": "Varies",
+        "stipend": "N/A",
+        "id": 49,
+        "company": "NITI Aayog",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "Varies",
+        "endDate": "Varies",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Program"
+    },
+    {
+        "month": "November",
+        "organization": "HSBC",
+        "role": "Summer Intern",
+        "application_period": "November - December",
+        "stipend": "N/A",
+        "id": 50,
+        "company": "HSBC",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "November - December",
+        "endDate": "November - December",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Intern"
+    },
+    {
+        "month": "November",
+        "organization": "Goldman Sachs",
+        "role": "Summer Analyst Internship",
+        "application_period": "November - December",
+        "stipend": "N/A",
+        "id": 51,
+        "company": "Goldman Sachs",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "November - December",
+        "endDate": "November - December",
+        "description": "Study environmental impact assessments",
+        "title": "Summer Analyst Internship"
+    },
+    {
+        "month": "November",
+        "organization": "Citi Bank",
+        "role": "Technology Intern",
+        "application_period": "November - December",
+        "stipend": "N/A",
+        "id": 52,
+        "company": "Citi Bank",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "November - December",
+        "endDate": "November - December",
+        "description": "Study environmental impact assessments",
+        "title": "Technology Intern"
+    },
+    {
+        "month": "November",
+        "organization": "Microsoft",
+        "role": "Explore Internship (Software Engineer)",
+        "application_period": "November - January",
+        "stipend": "80,000 - 1.5 Lakh",
+        "id": 53,
+        "company": "Microsoft",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "stipend",
+        "remote": false,
+        "duration": 6,
+        "startDate": "November - January",
+        "endDate": "November - January",
+        "description": "Study environmental impact assessments",
+        "title": "Explore Internship (Software Engineer)"
+    },
+    {
+        "month": "December",
+        "organization": "Intel",
+        "role": "Student Intern",
+        "application_period": "December - January",
+        "stipend": "N/A",
+        "id": 54,
+        "company": "Intel",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "December - January",
+        "endDate": "December - January",
+        "description": "Study environmental impact assessments",
+        "title": "Student Intern"
+    },
+    {
+        "month": "December",
+        "organization": "DRDO",
+        "role": "Apprenticeship",
+        "application_period": "December - January",
+        "stipend": "N/A",
+        "id": 55,
+        "company": "DRDO",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "December - January",
+        "endDate": "December - January",
+        "description": "Study environmental impact assessments",
+        "title": "Apprenticeship"
+    },
+    {
+        "month": "December",
+        "organization": "JP Morgan & Chase",
+        "role": "Software Engineer Internship",
+        "application_period": "December - January",
+        "stipend": "N/A",
+        "id": 56,
+        "company": "JP Morgan & Chase",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "December - January",
+        "endDate": "December - January",
+        "description": "Study environmental impact assessments",
+        "title": "Software Engineer Internship"
+    },
+    {
+        "month": "December",
+        "organization": "Nvidia",
+        "role": "Internship Programs",
+        "application_period": "December - January",
+        "stipend": "N/A",
+        "id": 57,
+        "company": "Nvidia",
+        "type": "gov",
+        "location": "Denver, CO",
+        "payType": "unpaid",
+        "remote": false,
+        "duration": 6,
+        "startDate": "December - January",
+        "endDate": "December - January",
+        "description": "Study environmental impact assessments",
+        "title": "Internship Programs"
+    }
+]
+
+        // Filter state
+        let filters = {
+            gov: false,
+            private: false,
+            stipend: false,
+            unpaid: false,
+            remote: false,
+            duration: 24,
+            search: ''
+        };
+
+        // Get DOM elements
+        const filterGov = document.getElementById('filterGov');
+        const filterPrivate = document.getElementById('filterPrivate');
+        const filterStipend = document.getElementById('filterStipend');
+        const filterUnpaid = document.getElementById('filterUnpaid');
+        const filterRemote = document.getElementById('filterRemote');
+        const durationSlider = document.getElementById('durationSlider');
+        const durationValue = document.getElementById('durationValue');
+        const searchInput = document.getElementById('searchInput');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const internshipsContainer = document.getElementById('internshipsContainer');
+        const resultsCount = document.getElementById('resultsCount');
+        const pluralS = document.getElementById('pluralS');
+
+        // Event listeners
+        filterGov.addEventListener('change', () => { filters.gov = filterGov.checked; applyFilters(); });
+        filterPrivate.addEventListener('change', () => { filters.private = filterPrivate.checked; applyFilters(); });
+        filterStipend.addEventListener('change', () => { filters.stipend = filterStipend.checked; applyFilters(); });
+        filterUnpaid.addEventListener('change', () => { filters.unpaid = filterUnpaid.checked; applyFilters(); });
+        filterRemote.addEventListener('change', () => { filters.remote = filterRemote.checked; applyFilters(); });
+
+        durationSlider.addEventListener('input', (e) => {
+            filters.duration = parseInt(e.target.value);
+            durationValue.textContent = filters.duration;
+            applyFilters();
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            filters.search = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        clearFiltersBtn.addEventListener('click', () => {
+            filterGov.checked = false;
+            filterPrivate.checked = false;
+            filterStipend.checked = false;
+            filterUnpaid.checked = false;
+            filterRemote.checked = false;
+            durationSlider.value = 24;
+            durationValue.textContent = '24';
+            searchInput.value = '';
+
+            filters = {
+                gov: false,
+                private: false,
+                stipend: false,
+                unpaid: false,
+                remote: false,
+                duration: 24,
+                search: ''
+            };
+
+            applyFilters();
+        });
+
+        // Format date
+        function formatDate(dateString) {
+            // const date = new Date(dateString);
+            // return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return dateString;
+        }
+
+        // Create internship card HTML
+        function createInternshipCard(internship) {
+            const typeLabel = internship.type === 'gov' ?
+                '<span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">Government</span>' :
+                '<span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full">Private</span>';
+
+            const remoteLabel = internship.remote ?
+                '<span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">Remote</span>' : '';
+
+            return `
+                <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">${internship.title}</h3>
+                            <p class="text-lg text-indigo-600 font-medium mb-3">${internship.company}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            ${typeLabel}
+                            ${remoteLabel}
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">${internship.description}</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="flex items-center text-gray-700">
+                            <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span class="text-sm">${internship.location}</span>
+                        </div>
+                        <div class="flex items-center text-gray-700">
+                            <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-sm">${internship.duration} weeks</span>
+                        </div>
+                        <div class="flex items-center text-gray-700">
+                            <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-sm">${internship.stipend}</span>
+                        </div>
+                        <div class="flex items-center text-gray-700">
+                            <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-sm">${formatDate(internship.startDate)}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Apply Now
+                    </button>
+                </div>
+            `;
+        }
+
+        // Filter internships
+        function applyFilters() {
+            const filtered = internships.filter(internship => {
+                // Search filter
+                if (filters.search &&
+                    !internship.title.toLowerCase().includes(filters.search) &&
+                    !internship.company.toLowerCase().includes(filters.search)) {
+                    return false;
+                }
+
+                // Type filters
+                const typeFilters = [];
+                if (filters.gov) typeFilters.push('gov');
+                if (filters.private) typeFilters.push('private');
+                if (typeFilters.length > 0 && !typeFilters.includes(internship.type)) {
+                    return false;
+                }
+
+                // Pay type filters
+                const payFilters = [];
+                if (filters.stipend) payFilters.push('stipend');
+                if (filters.unpaid) payFilters.push('unpaid');
+                if (payFilters.length > 0 && !payFilters.includes(internship.payType)) {
+                    return false;
+                }
+
+                // Remote filter
+                if (filters.remote && !internship.remote) {
+                    return false;
+                }
+
+                // Duration filter
+                if (internship.duration > filters.duration) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            renderInternships(filtered);
+        }
+
+        // Render internships
+        function renderInternships(internshipsToRender) {
+            if (internshipsToRender.length === 0) {
+                internshipsContainer.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+                        <svg class="h-16 w-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">No internships found</h3>
+                        <p class="text-gray-600">Try adjusting your filters to see more results</p>
+                    </div>
+                `;
+            } else {
+                internshipsContainer.innerHTML = internshipsToRender
+                    .map(internship => createInternshipCard(internship))
+                    .join('');
+            }
+
+            // Update results count
+            resultsCount.textContent = internshipsToRender.length;
+            pluralS.textContent = internshipsToRender.length !== 1 ? 's' : '';
+        }
+
+        // Initial render
+        applyFilters();
+    </script>
+</body>
+
+</html>
